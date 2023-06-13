@@ -2,15 +2,18 @@ package com.prabhjotsingh.kotlindemo.controller
 
 import com.prabhjotsingh.kotlindemo.model.AppUser
 import com.prabhjotsingh.kotlindemo.service.UserService
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/users")
 class UserController(private val userService: UserService) {
 
+  private val logger = LoggerFactory.getLogger(UserController::class.java)
   @GetMapping
   fun getUsers(): ResponseEntity<List<AppUser>> {
     val users = userService.getUsers()
@@ -18,7 +21,7 @@ class UserController(private val userService: UserService) {
   }
 
   @GetMapping("/{id}")
-  fun getUserById(@PathVariable id: UUID): ResponseEntity<AppUser> {
+  fun getUserById(@PathVariable id: Int): ResponseEntity<AppUser> {
     val user = userService.getUserById(id)
     return if (user != null) {
       ResponseEntity.ok(user)
@@ -32,6 +35,7 @@ class UserController(private val userService: UserService) {
     val createdUser = userService.createUser(user)
     return ResponseEntity.status(HttpStatus.CREATED).body(createdUser)
   }
+
 
   @PostMapping("/login")
   fun login(
@@ -57,7 +61,7 @@ class UserController(private val userService: UserService) {
     }
   }
   @PutMapping("/{id}")
-  fun updateUser(@PathVariable id: UUID, @RequestBody user: AppUser): ResponseEntity<AppUser> {
+  fun updateUser(@PathVariable id: Int, @RequestBody user: AppUser): ResponseEntity<AppUser> {
     val updatedUser = userService.updateUser(id, user)
     return if (updatedUser != null) {
       ResponseEntity.ok(updatedUser)
@@ -67,7 +71,7 @@ class UserController(private val userService: UserService) {
   }
 
   @DeleteMapping("/{id}")
-  fun deleteUser(@PathVariable id: UUID): ResponseEntity<Unit> {
+  fun deleteUser(@PathVariable id: Int): ResponseEntity<Unit> {
     val isDeleted = userService.deleteUser(id)
     return if (isDeleted) {
       ResponseEntity.noContent().build()

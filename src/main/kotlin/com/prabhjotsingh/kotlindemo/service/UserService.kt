@@ -3,7 +3,6 @@ package com.prabhjotsingh.kotlindemo.service
 import com.prabhjotsingh.kotlindemo.model.AppUser
 import com.prabhjotsingh.kotlindemo.repository.UserRepository
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class UserService(private val userRepository: UserRepository) {
@@ -12,11 +11,14 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.findAll()
     }
 
-    fun getUserById(id: UUID): AppUser? {
+    fun getUserById(id: Int): AppUser? {
         return userRepository.findById(id).orElse(null)
     }
 
     fun createUser(user: AppUser): AppUser {
+        val existingUsers = getUsers()
+        val nextId = existingUsers.maxByOrNull { it.id ?: 0 }?.id?.plus(1) ?: 1
+        user.id = nextId
         return userRepository.save(user)
     }
 
@@ -44,7 +46,7 @@ class UserService(private val userRepository: UserRepository) {
         return true
     }
 
-    fun updateUser(id: UUID, user: AppUser): AppUser? {
+    fun updateUser(id: Int, user: AppUser): AppUser? {
         val existingUser = userRepository.findById(id).orElse(null)
         if (existingUser != null) {
             existingUser.firstName = user.firstName
@@ -56,7 +58,7 @@ class UserService(private val userRepository: UserRepository) {
         return null
     }
 
-    fun deleteUser(id: UUID): Boolean {
+    fun deleteUser(id: Int): Boolean {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id)
             return true

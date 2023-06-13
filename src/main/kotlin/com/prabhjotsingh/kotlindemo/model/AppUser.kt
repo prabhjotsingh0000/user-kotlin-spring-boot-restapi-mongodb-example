@@ -7,7 +7,7 @@ import java.util.*
 @Document("app-user")
 data class AppUser(
   @Id
-  val id: UUID = UUID.randomUUID(),
+  var id: Int? = null,
   var firstName: String,
   var lastName: String,
   val email: String,
